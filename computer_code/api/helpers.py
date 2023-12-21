@@ -9,7 +9,10 @@ import time
 import numpy as np
 import cv2 as cv
 from KalmanFilter import KalmanFilter
-from pseyepy import Camera
+
+#from pseyepy import Camera
+from videoCam import Cameras_raw
+
 from Singleton import Singleton
 
 
@@ -20,9 +23,17 @@ class Cameras:
         filename = os.path.join(dirname, "camera-params.json")
         f = open(filename)
         self.camera_params = json.load(f)
+        #print(self.camera_params)
+        camera_paths = []
+        for c in self.camera_params:
+            camera_paths.append(c["path"])
 
-        self.cameras = Camera(fps=90, resolution=Camera.RES_SMALL, gain=10, exposure=100)
-        self.num_cameras = len(self.cameras.exposure)
+        self.cameras = Cameras_raw(camera_paths)
+       
+
+
+
+        self.num_cameras = len(camera_paths)
         print(self.num_cameras)
 
         self.is_capturing_points = False
@@ -74,9 +85,9 @@ class Cameras:
             frames[i] = cv.undistort(frames[i], self.get_camera_params(i)["intrinsic_matrix"], self.get_camera_params(i)["distortion_coef"])
             frames[i] = cv.GaussianBlur(frames[i],(9,9),0)
             kernel = np.array([[-2,-1,-1,-1,-2],
-                               [-1,1,3,1,-1],
-                               [-1,3,4,3,-1],
-                               [-1,1,3,1,-1],
+                               [-1, 1, 3, 1,-1],
+                               [-1, 3, 4, 3,-1],
+                               [-1, 1, 3, 1,-1],
                                [-2,-1,-1,-1,-2]])
             frames[i] = cv.filter2D(frames[i], -1, kernel)
             frames[i] = cv.cvtColor(frames[i], cv.COLOR_RGB2BGR)

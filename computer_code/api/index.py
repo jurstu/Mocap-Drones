@@ -18,7 +18,7 @@ import json
 
 serialLock = threading.Lock()
 
-ser = serial.Serial("/dev/cu.usbserial-02X2K2GE", 1000000, write_timeout=1, )
+ser = open("/home/jur/hwver.json") #serial.Serial("/dev/tty", 1000000, write_timeout=1, )
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -37,7 +37,7 @@ def camera_stream():
     cameras.set_num_objects(num_objects)
     
     def gen(cameras):
-        frequency = 150
+        frequency = 30
         loop_interval = 1.0 / frequency
         last_run_time = 0
         i = 0
